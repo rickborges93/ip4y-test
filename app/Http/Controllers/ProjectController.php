@@ -7,6 +7,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Project;
+use App\Models\Task;
 use App\Http\Requests\ProjectCreateUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 
@@ -49,8 +50,15 @@ class ProjectController extends Controller
             'conclusion_date' => date_format(new \DateTime($validated['conclusion_date']),'Y-d-m H:i:s.v')
         ]);
 
-        return Inertia::render('Projects/List', [
-            'projects' => Project::all()
-        ])->with('success', 'Project updated successfully.');
+        return to_route('projects.show', $id);
+    }
+
+    public function show($id) {
+        $project = Project::find($id);
+
+        return Inertia::render('Projects/Details', [
+            'project' => $project,
+            'tasks' => $project->tasks
+        ]);
     }
 }

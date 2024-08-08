@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('tasks', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->string('title');
             $table->string('description');
-            $table->timestamp('conclusion_date');
+            $table->enum('status', ['pending', 'in progress', 'completed'])->default('pending');
+
+            $table->foreignUuid('project_id')->references('id')->on('projects');
+
+            $table->timestamp('validate_at');
             $table->timestamps();
         });
     }
@@ -25,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('tasks');
     }
 };

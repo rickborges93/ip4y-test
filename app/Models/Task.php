@@ -4,29 +4,30 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Project;
 use Illuminate\Support\Str;
-use App\Models\Task;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class Project extends Model
+class Task extends Model
 {
     use HasUuids, HasFactory;
 
     protected $fillable = [
         'id',
-        'name',
+        'title',
         'description',
-        'conclusion_date',
+        'status',
+        'validate_at',
+        'project_id',
     ];
 
     protected $keyType = "string";
 
     public $incrementing = false;
 
-    public function tasks(): HasMany
-    {
-        return $this->hasMany(Task::class, 'project_id', 'id');
+    public function project(): BelongsTo {
+        return $this->belongsTo(Project::class);
     }
 
     public static function boot() {
