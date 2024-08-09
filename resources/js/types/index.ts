@@ -18,6 +18,7 @@ export interface Task {
     description: string;
     validate_at: Date;
     status: ETaskStatus;
+    users: User[];
 }
 
 export enum ETaskStatus {
@@ -33,4 +34,5 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     projects: Project[];
     project: Project;
     tasks: Task[];
+    users: User[];
 };
