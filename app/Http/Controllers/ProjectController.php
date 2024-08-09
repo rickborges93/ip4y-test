@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
 use App\Http\Requests\ProjectCreateUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 
@@ -56,9 +57,16 @@ class ProjectController extends Controller
     public function show($id) {
         $project = Project::find($id);
 
+        $tasks = $project->tasks;
+
+        foreach($tasks as $task) {
+            $task = $task->users;
+        }
+
         return Inertia::render('Projects/Details', [
             'project' => $project,
-            'tasks' => $project->tasks
+            'tasks' => $tasks,
+            'users' => User::all(),
         ]);
     }
 }
