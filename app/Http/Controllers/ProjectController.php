@@ -142,7 +142,7 @@ class ProjectController extends Controller
 
         $arrayTasks = $tasks->toArray();
 
-        foreach($tasks as $task) {
+        foreach($tasks as $i => $task) {
             $concatNames = '';
             $users = $task->users;
 
@@ -154,7 +154,7 @@ class ProjectController extends Controller
                 }
             }
 
-            $arrayTasks[$index]['participants'] = $concatNames;
+            $arrayTasks[$i]['participants'] = $concatNames;
         }
 
         array_unshift($arrayTasks, array_keys($arrayTasks[0]));
