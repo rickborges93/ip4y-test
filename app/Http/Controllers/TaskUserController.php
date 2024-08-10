@@ -14,22 +14,6 @@ use App\Notifications\RemoveUserFromTask;
 class TaskUserController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(TaskUserCreateRequest $request)
@@ -54,30 +38,6 @@ class TaskUserController extends Controller
         $user->notify(new AddUserToTask($user, $project, $task));
 
         return to_route('projects.show', $task->project_id);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(TaskUser $taskUser)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(TaskUser $taskUser)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, TaskUser $taskUser)
-    {
-        //
     }
 
     /**
