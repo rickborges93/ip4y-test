@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\TaskUser;
 use App\Models\User;
 use App\Models\Task;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Requests\TaskUserCreateRequest;
+use App\Notifications\AddUserToTask;
+use App\Notifications\RemoveUserFromTask;
 
 class TaskUserController extends Controller
 {
@@ -37,6 +40,7 @@ class TaskUserController extends Controller
         $idUser = $validated['userid'];
 
         $task = Task::find($idTask);
+        $project = Project::find($task->project_id);
 
         $isTaskUserExists = TaskUser::where('user_id', $idUser)->where('task_id', $idTask)->first();
 
@@ -46,6 +50,8 @@ class TaskUserController extends Controller
 
         $user = User::findOrFail($idUser);
         $user->taskUser()->attach($idTask);
+
+        $user->notify(new AddUserToTask($user, $project, $task));
 
         return to_route('projects.show', $task->project_id);
     }
@@ -82,7 +88,11 @@ class TaskUserController extends Controller
         $taskUserToDelete = TaskUser::where('user_id', $userId)->where('task_id', $taskId)->first();
         $taskUserToDelete->delete();
 
+        $user = User::find($userId);
         $task = Task::find($taskId);
+        $project = Project::find($task->project_id);
+
+        $user->notify(new RemoveUserFromTask($user, $project, $task));
 
         return to_route('projects.show', $task->project_id);
     }
