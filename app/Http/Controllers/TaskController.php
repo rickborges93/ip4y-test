@@ -37,6 +37,9 @@ class TaskController extends Controller
         ]);
     }
 
+   /**
+   * Update the specified resource in storage.
+   */
     public function update(TaskUpdateRequest $request, $id)
     {
         $validated = $request->validated();
