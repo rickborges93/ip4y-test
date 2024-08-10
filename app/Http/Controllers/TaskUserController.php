@@ -40,8 +40,7 @@ class TaskUserController extends Controller
         return to_route('projects.show', $task->project_id);
     }
 
-    /**
-     * Show the form for editing the specified resource.
+    * Show the form for editing the specified resource.
      */
     public function edit(TaskUser $taskUser)
     {
@@ -49,8 +48,8 @@ class TaskUserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     */
+    * Update the specified resource in storage.
+    */
     public function update(Request $request, TaskUser $taskUser)
     {
         //
