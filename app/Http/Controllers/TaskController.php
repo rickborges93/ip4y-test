@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\TaskCreateRequest;
 use App\Http\Requests\TaskUpdateRequest;
 use Inertia\Inertia;
+use App\Notifications\TaskUpdated;
 
 class TaskController extends Controller
 {
@@ -78,6 +79,14 @@ class TaskController extends Controller
 
         $task = Task::find($id);
         $projectId = $task->project_id;
+
+        $project = Project::find($projectId);
+
+        $users = $task->users;
+
+        foreach($users as $user) {
+            $user->notify(new TaskUpdated($user, $project, $task));
+        }
 
         $task->update([
             'title' => $validated['title'],
