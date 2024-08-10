@@ -27,6 +27,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/projects/{id}', [ProjectController::class, 'destroy'])->name('projects.destroy');
     Route::put('/projects/{id}', [ProjectController::class, 'update'])->name('projects.update');
     Route::get('/projects/{id}', [ProjectController::class, 'show'])->name('projects.show');
+
+    Route::get('/projects/{id}/pdf', [ProjectController::class, 'pdf'])->name('projects.pdf');
+    Route::get('/projects/{id}/csv', [ProjectController::class, 'csv'])->name('projects.csv');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

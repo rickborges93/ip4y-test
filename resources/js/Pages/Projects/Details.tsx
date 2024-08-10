@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import { PageProps, Project, Task, User } from '@/types';
+import { Head, useForm } from '@inertiajs/react';
+import { ETaskStatus, PageProps, Project, Task, User } from '@/types';
 import SuccessButton from '@/Components/SuccessButton';
 import { formatDate } from '@/utils/formatDate';
 import CreateNewTask from './Partials/CreateNewTask';
@@ -10,8 +10,69 @@ import DeleteTask from './Partials/DeleteTask';
 import UpdateTask from './Partials/UpdateTask';
 import AddUserToTask from './Partials/AddUserToTask';
 import RemoveUserFromTask from './Partials/RemoveUserFromTask';
+import TextInput from '@/Components/TextInput';
+import axios from 'axios';
+
 
 export default function ProjectsDetail({ auth, project, tasks, users }: PageProps<{}>) {
+  const selectInput = useRef<HTMLSelectElement>(null);
+  const nameInput = useRef<HTMLInputElement>(null);
+
+  const { data, setData, get, post } = useForm({
+    status: '',
+    initialDate: '',
+    finalDate: '',
+  })
+
+  useEffect(() => {
+    if (data.status !== '' || (data.initialDate !== '' && data.finalDate !== '')) {
+      get(route('projects.show', project.id), {
+        preserveState: true
+      })
+    }
+
+  }, [data.status, data.initialDate, data.finalDate])
+
+  const handleGeneratePdf = () => {
+
+    fetch(route('projects.pdf', {
+      id: project.id,
+      status: data.status,
+      initialDate: data.initialDate,
+      finalDate: data.finalDate,
+    }))
+      .then((res) => res.blob())
+      .then((blob) => {
+        const a = document.createElement("a");
+        document.body.appendChild(a);
+        const file = window.URL.createObjectURL(blob)
+        a.href = file;
+        a.download = 'task.pdf';
+        a.click();
+        window.URL.revokeObjectURL(file);
+      })
+  }
+
+  const handleGenerateCsv = () => {
+
+    fetch(route('projects.csv', {
+      id: project.id,
+      status: data.status,
+      initialDate: data.initialDate,
+      finalDate: data.finalDate,
+    }))
+      .then((res) => res.blob())
+      .then((blob) => {
+        const a = document.createElement("a");
+        document.body.appendChild(a);
+        const file = window.URL.createObjectURL(blob)
+        a.href = file;
+        a.download = 'task.csv';
+        a.click();
+        window.URL.revokeObjectURL(file);
+      })
+  }
+
   const [openModalTaskCreation, setOpenModalTaskCreation] = useState(false);
   const [openModalTaskRemotion, setOpenModalTaskRemotion] = useState(false);
   const [openModalTaskUpdate, setOpenModalTaskUpdate] = useState(false);
@@ -82,7 +143,7 @@ export default function ProjectsDetail({ auth, project, tasks, users }: PageProp
     >
       <Head title="Projects" />
 
-      <div className="py-12">
+      <div className='p-12'>
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div className='flex justify-between'>
@@ -97,6 +158,75 @@ export default function ProjectsDetail({ auth, project, tasks, users }: PageProp
                 <SuccessButton onClick={() => handleOnCreateNewTask()} className="ms-3">
                   New Task
                 </SuccessButton>
+              </div>
+            </div>
+
+            <div className='pb-6 pt-6'>
+              <div className='max-w-7xl mx-auto sm:px-6 lg:px-8'>
+                <div className='bg-gray-200 overflow-hidden shadow-sm sm:rounded-lg'>
+                  <div className='p-3 text-gray-900 font-bold text-xs flex flex-col gap-2'>
+                    <div className='flex justify-between'>
+                      <div>Filters</div>
+                      <div className='flex gap-2'>
+                        <button
+                          className='flex justify-center items-center rounded-md bg-red-500 p-1 shadow-sm border-b-2 border-b-red-900'
+                          onClick={() => handleGeneratePdf()}
+                        >
+                          Extract PDF
+                        </button>
+                        <button
+                          className='flex justify-center items-center rounded-md bg-green-500 p-1 shadow-sm border-b-2 border-b-green-900'
+                          onClick={() => handleGenerateCsv()}
+                        >
+                          Extract CSV
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className='mt-2 md:w-1/4 w-1/2'>
+                      <span className='text-xs'>Status</span>
+                      <select
+                          id="status"
+                          name="status"
+                          ref={selectInput}
+                          value={data.status}
+                          onChange={(e) => setData('status', e.target.value as ETaskStatus)}
+                          className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full"
+                      >
+                          <option value="all">Select a status...</option>
+                          <option value="pending">Pending</option>
+                          <option value="in progress">In Progress</option>
+                          <option value="completed">Completed</option>
+                      </select>
+                    </div>
+
+                    <div className="mt-2 md:w-1/4 w-1/2">
+                      <span className='text-xs'>Date</span>
+                      <div className='flex gap-4'>
+                        <TextInput
+                            id="initialDate"
+                            type="date"
+                            name="initialDate"
+                            ref={nameInput}
+                            value={data.initialDate}
+                            onChange={(e) => setData('initialDate', e.target.value)}
+                            className="mt-1 block w-3/4"
+                            isFocused
+                        />
+                        <TextInput
+                            id="finalDate"
+                            type="date"
+                            name="finalDate"
+                            ref={nameInput}
+                            value={data.finalDate}
+                            onChange={(e) => setData('finalDate', e.target.value)}
+                            className="mt-1 block w-3/4"
+                            isFocused
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
