@@ -1,66 +1,108 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Sobre o projeto
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema de gerenciamento de projetos e tarefas desenvolvido em Laravel.
 
-## About Laravel
+Todo o sistema de autenticação, registro, login e recuperação de senha foi utilizado o breeze, um starter pack do Laravel.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sobre o frontend foi utilizado o Inertia + React como bibliotecas e a estilização feita com tailwind, garantindo a responsividade.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Além disto, foram desenvolvidos todos os testes para cada rotas, seja ele unitário quanto e2e.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+### Parte teórica
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**1.** Explique a diferença entre Eloquent ORM e Query Builder no Laravel. Quais são os prós e contras de cada abordagem?
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+**R:** A principal vantagem do Eloquent é a velocidade do desenvolvimento, que reduz custo de projeto (tempo é dinheiro). A principal desvantagem é que qualquer ORM comparado a um query builder é a velocidade de processamento e o desenvolvedor ter menos controle do gerenciamento do banco de dados. Porém essa desvantagem não acontece na maioria dos casos, visto que não há queries tão complexas a ponto de precisar de uma otimização.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+**2.** Como você garantiria a segurança de uma aplicação Laravel ao lidar com entradas de usuários e dados sensíveis? Liste pelo menos três práticas recomendadas e explique cada uma delas.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+**R:** 
+SQL Injection - Ao utilizar o Eloquent, automaticamente o Laravel lida com os dados que estão entrando no sistema e protege a aplicação de SQL Injection, mesmo utilizando o query builder.
 
-### Premium Partners
+Criptografia - Todas as senhas ficam salvas no banco de dados utilizando criptografia. O próprio Laravel tem uma biblioteca de Hash que garante essa criptografia com saltos, assim tornando irreversível.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Dados sensíveis - Utilizando as Models + Eloquent, garante-se que os dados sensíveis se tornem colunas escondidas, então independente da query esses dados nunca sairão do backend. Além de utilizar os Resources, que são técnicas de criar "alias" (apelidos) para os campos, escondendo os nomes das tabelas.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**3.** Qual é o papel dos Middlewares no Laravel e como eles se integram ao pipeline de requisição? Dê um exemplo prático de como você criaria e aplicaria um Middleware personalizado para verificar se o usuário está ativo antes de permitir o acesso a uma rota específica.
 
-## Code of Conduct
+**R:** O middleware é uma função intermediária, que ocorre entre a requisição e a resposta dela, tendo um papel fundamental para lidar com tratativas comuns que ocorrem em todas as rotas, como por exemplo a garantir que o usuário esteja logado em sistema para poder ter um retorno final da requisição feita. Junto com o middleware "auth" que garante que o usuário esteja logado, faz-se um outro middleware chamado "activedUser" que garante após o middleware de auth pega o usuário logado, verifica na base de dados qual "status" ou uma flag booleana que pode se chamar "ativo" esteja validado e da continuidade na requisição, se não estoura um erro.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+**4.** Descreva como o Laravel gerencia migrations e como isso é útil para o desenvolvimento de aplicações. Quais são as melhores práticas ao criar e aplicar migrations?
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**R:** As migrations são criadas com dois métodos em uma classe de migração, up e down, onde up tem a função de criar/alterar tabelas, colunas e/ou índices, e atabela down tem a função de reverter o que a função up fez. Durante um desenvolvimento onde se é necessário fazer qualquer alteração/adição no banco de dados, torna-se necessário a criação de um migration, assim controlando o versionamento da sua base de dados, sabendo tudo o que foi feito na base de dados desde o início do projeto. Nunca se deve alterar uma migration, por exemplo caso tenha sido feito algo equivocado, uma nova migration deve ser criada para consertar esse equívoco, justamente para manter esse log. Único momento que se pode alterar uma migration é em ambiente de desenvolvimento com a condição de que ninguém esteja utilizando alguma coluna ou tabela que essa migration faz referência.
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**5.** Qual é a diferença entre transações e savepoints no SQL Server? Como você usaria transações em um ambiente Laravel?
+
+**R:** Transações são sequência de operações no banco de dados tratadas num único bloco, assim caso uma dessas operações falhe, pode-se reverter (rollback) todos os processos, garantindo que faça "tudo ou nada" dentro de um processo. O savepoint no SQL Server serve como um ponto de retorno caso alguma operação falhe, assim não cancelando todas as operações, mas sim operações selecionadas previamente, podendo continuar uma parte e falhar outras, desde que não afetem as regras de negócio.
+
+O Laravel disponibiliza um método estático chamado beginTransaction() que inicia uma transação e os métodos estáticos commit() para caso de sucesso e rollback() para caso de fracasso em alguma das transações. Na lógica basta colocar o código dentro de um bloco try/catch e manter o commit() antes do retorno da função e o rollback no catch caso estoure algum erro. 
+
+---
+
+### Parte prática
+
+##### Como deixar o projeto pronto para rodar
+
+1. Clone este repositório
+
+```
+git clone https://github.com/rickborges93/ip4y-test.git
+```
+
+2. Acesse a pasta raiz do projeto.
+
+```
+cd ip4y-test
+```
+
+3. Instale as dependências do Laravel
+
+```
+composer update
+```
+ou
+```
+php composer.phar update
+```
+
+4. Instale as dependências do frontend (inertiajs + react)
+```
+npm i 
+```
+
+5. Copie e mude as configurações no arquivo .env
+```
+  cp .env.example .env
+```
+
+6. Após alterar os dados do projeto conectando no banco de dados, rode as migrations
+```
+php artisan migrate
+```
+7. Agora abra dois terminais e rode os comandos
+7.1. Rode o backend
+```php artisan serve```
+7.2. Rode o frontend
+```npm run dev```
+
+8. Pronto, agora basta acessar a URL http://localhost:8000/ e testar todas as funcionalidades.
+
+9. Caso queira rodar os testes, basta rodar o código em um terceiro terminal.
+```
+php artisan test
+```
+---
+Aproveite :)
+
+LinkedIn: [Henrique Borges](https://www.linkedin.com/in/henrique-samensari-borges-6aa553174/) 
+
+
