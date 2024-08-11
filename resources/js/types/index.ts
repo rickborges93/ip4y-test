@@ -19,6 +19,7 @@ export interface Task {
     validate_at: Date;
     status: ETaskStatus;
     users: User[];
+    project?: Project;
 }
 
 export enum ETaskStatus {
